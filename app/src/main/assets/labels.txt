@@ -1,0 +1,43 @@
+Giới hạn tốc độ (20km/h)
+Giới hạn tốc độ (30km/h)
+Giới hạn tốc độ (50km/h)
+Giới hạn tốc độ (60km/h)
+Giới hạn tốc độ (70km/h)
+Giới hạn tốc độ (80km/h)
+Hết giới hạn tốc độ (80km/h)
+Giới hạn tốc độ (100km/h)
+Giới hạn tốc độ (120km/h)
+Cấm vượt
+Cấm vượt với xe trên 3.5 tấn
+Quyền ưu tiên ở giao lộ kế tiếp
+Đường ưu tiên
+Nhường đường
+Dừng lại
+Cấm tất cả phương tiện
+Cấm xe trên 3.5 tấn
+Cấm vào
+Cảnh báo nguy hiểm chung
+Khúc cua nguy hiểm bên trái
+Khúc cua nguy hiểm bên phải
+Khúc cua đôi
+Đường gồ ghề
+Đường trơn trượt
+Đường hẹp bên phải
+Công trường thi công
+Đèn tín hiệu giao thông
+Người đi bộ
+Trẻ em qua đường
+Xe đạp qua đường
+Cẩn thận băng/tuyết
+Động vật hoang dã qua đường
+Hết mọi giới hạn tốc độ và cấm vượt
+Rẽ phải phía trước
+Rẽ trái phía trước
+Chỉ được đi thẳng
+Đi thẳng hoặc rẽ phải
+Đi thẳng hoặc rẽ trái
+Đi bên phải
+Đi bên trái
+Bắt buộc đi vòng xuyến
+Hết đoạn cấm vượt
+Hết đoạn cấm vượt với xe trên 3.5 tấn
