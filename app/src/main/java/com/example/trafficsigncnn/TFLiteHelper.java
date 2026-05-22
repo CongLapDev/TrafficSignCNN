@@ -54,8 +54,10 @@ public class TFLiteHelper {
         TensorImage inputImage = new TensorImage(inputDataType);
         inputImage.load(bitmap);
 
-        // 2. Preprocess: Resize to model's expected size and Normalize pixels to [0.0, 1.0]
-        // NormalizeOp(mean, std) -> (value - mean) / std. Setting mean=0.0f, std=255.0f scales to [0.0, 1.0].
+        // 2. Preprocess: Resize to model's expected size and Normalize pixels to [0.0,
+        // 1.0]
+        // NormalizeOp(mean, std) -> (value - mean) / std. Setting mean=0.0f, std=255.0f
+        // scales to [0.0, 1.0].
         ImageProcessor imageProcessor = new ImageProcessor.Builder()
                 .add(new ResizeOp(inputHeight, inputWidth, ResizeOp.ResizeMethod.BILINEAR))
                 .add(new NormalizeOp(0.0f, 255.0f))
