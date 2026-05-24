@@ -2,4 +2,49 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Home screen -->
+    <color name="home_bg">#0D1B35</color>
+    <color name="card_live">#142244</color>
+    <color name="card_capture">#0F3326</color>
+    <color name="card_gallery">#2A1050</color>
+    <color name="card_info">#111C30</color>
+
+    <!-- Activity backgrounds -->
+    <color name="scan_bg">#0A0A0A</color>
+
+    <!-- Result card -->
+    <color name="result_bg">#CC0D1B35</color>
+    <color name="result_text">#FFFFFF</color>
+    <color name="result_sub">#90B4C8</color>
+
+    <!-- Accent -->
+    <color name="accent_blue">#3D8BFF</color>
+    <color name="accent_green">#22C55E</color>
+    <color name="accent_amber">#F59E0B</color>
+
+    <!-- Dashboard (OLED dark, #3B82F6 blue system) -->
+    <color name="dashboard_bg">#050D1A</color>
+    <color name="dashboard_header_from">#0A1628</color>
+    <color name="dashboard_header_to">#050D1A</color>
+    <color name="dashboard_surface">#0D1F3C</color>
+    <color name="dashboard_surface_2">#0A172E</color>
+    <color name="dashboard_border">#1A2E50</color>
+    <color name="dashboard_primary">#3B82F6</color>
+    <color name="dashboard_primary_dark">#1D4ED8</color>
+    <color name="dashboard_on_primary">#FFFFFF</color>
+    <color name="dashboard_text_primary">#F0F4FF</color>
+    <color name="dashboard_text_secondary">#7B93B8</color>
+    <color name="dashboard_text_muted">#3D5A80</color>
+    <color name="dashboard_success">#22C55E</color>
+    <color name="dashboard_amber">#F59E0B</color>
+    <color name="dashboard_chip_bg">#0D2A5C</color>
+
+    <!-- Grid feature colors -->
+    <color name="feat_live">#0E2449</color>
+    <color name="feat_capture">#0F2E1F</color>
+    <color name="feat_gallery">#1E0A42</color>
+    <color name="feat_history">#1A1A0A</color>
+    <color name="feat_stats">#0A2030</color>
+    <color name="feat_profile">#1A0A2E</color>
 </resources>

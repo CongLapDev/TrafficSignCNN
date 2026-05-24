@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Minimalist viewfinder: only the 4 corner "L-brackets" are drawn.
+    This is achieved with a layer-list where each corner is a rectangle
+    clipped to show only the two sides of that corner.
+    Pure white, clean, no full border — feels like a professional camera app.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ── TOP-LEFT corner ── -->
+    <!-- Horizontal arm -->
+    <item
+        android:left="0dp"
+        android:top="0dp"
+        android:right="0dp"
+        android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <size android:width="36dp" android:height="4dp" />
+            <solid android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+    <!-- Vertical arm -->
+    <item
+        android:left="0dp"
+        android:top="0dp"
+        android:right="0dp"
+        android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <size android:width="4dp" android:height="36dp" />
+            <solid android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+
+</layer-list>

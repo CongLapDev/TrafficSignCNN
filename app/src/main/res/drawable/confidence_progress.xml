@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Confidence ProgressBar drawable.
+    Uses a layer-list so we can tint the 'progress' item from Java
+    via progressDrawable.findDrawableByLayerId(R.id.progress_fill).setColorFilter()
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Track (background) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="6dp" />
+            <solid android:color="#EAEAEA" />
+        </shape>
+    </item>
+
+    <!-- Secondary progress (unused, kept for API compatibility) -->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="6dp" />
+                <solid android:color="#00000000" />
+            </shape>
+        </clip>
+    </item>
+
+    <!-- Filled progress — tinted from Java -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="6dp" />
+                <!-- Default green; overridden in Java based on confidence -->
+                <solid android:color="#4CAF50" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>
