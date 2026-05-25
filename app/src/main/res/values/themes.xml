@@ -6,4 +6,18 @@
     </style>
 
     <style name="Theme.TrafficSignCNN" parent="Base.Theme.TrafficSignCNN" />
+
+    <!--
+        Splash screen theme:
+        Sets windowBackground to OLED dark (#050D1A) so the OS-rendered
+        launch frame matches the app background — prevents white flash.
+        Applied to SplashActivity in AndroidManifest.xml.
+    -->
+    <style name="Theme.Splash" parent="Theme.TrafficSignCNN">
+        <item name="android:windowBackground">@color/auth_bg</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>

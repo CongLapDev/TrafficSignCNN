@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_splash.xml — Premium animated splash screen
+    Design: OLED dark, neon blue glow, minimal AI aesthetic
+    Layer order (back to front):
+      1. Radial gradient background
+      2. Outer glow ring (pulse animated in Java)
+      3. Logo container (scale + fade animated)
+      4. App title (slide-up animated)
+      5. Subtitle (fade-in delayed)
+      6. Bottom powered-by text (fade-in delayed)
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/splashRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_background">
+
+    <!-- ── OUTER GLOW RING ─────────────────────────────────────
+         Larger than logo, animated to pulse (scale 1.0 ↔ 1.25, alpha 0.6 ↔ 0.0)
+         Creates the breathing neon ring effect
+    ─────────────────────────────────────────────────────────── -->
+    <ImageView
+        android:id="@+id/splashGlowRing"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/splash_logo_glow"
+        android:alpha="0.0"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@id/splashLogoContainer"
+        app:layout_constraintEnd_toEndOf="@id/splashLogoContainer"
+        app:layout_constraintStart_toStartOf="@id/splashLogoContainer"
+        app:layout_constraintTop_toTopOf="@id/splashLogoContainer" />
+
+    <!-- ── LOGO CONTAINER ──────────────────────────────────────
+         scale 0.7→1.0 + alpha 0→1 via anim_splash_logo.xml
+    ─────────────────────────────────────────────────────────── -->
+    <FrameLayout
+        android:id="@+id/splashLogoContainer"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:alpha="0.0"
+        app:layout_constraintBottom_toTopOf="@id/tvSplashTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.42"
+        android:layout_marginBottom="28dp">
+
+        <!-- Circle background with blue border -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/splash_logo_bg"
+            android:scaleType="fitXY" />
+
+        <!-- App logo icon centered -->
+        <ImageView
+            android:id="@+id/ivSplashLogo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_splash_logo"
+            android:scaleType="fitCenter" />
+
+    </FrameLayout>
+
+    <!-- ── APP TITLE ───────────────────────────────────────────
+         "Traffic Sign AI"
+         slide-up + fade via anim_splash_title.xml
+    ─────────────────────────────────────────────────────────── -->
+    <TextView
+        android:id="@+id/tvSplashTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:text="Traffic Sign AI"
+        android:textColor="#F0F4FF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.03"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/tvSplashSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/splashLogoContainer" />
+
+    <!-- ── SUBTITLE ────────────────────────────────────────────
+         "Nhận diện biển báo giao thông"
+         fade-in delayed via anim_fade_in.xml
+    ─────────────────────────────────────────────────────────── -->
+    <TextView
+        android:id="@+id/tvSplashSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:text="Nhận diện biển báo giao thông"
+        android:textColor="#7B93B8"
+        android:textSize="14sp"
+        android:letterSpacing="0.01"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSplashTitle" />
+
+    <!-- ── POWERED BY ──────────────────────────────────────────
+         Bottom center — subtle branding
+    ─────────────────────────────────────────────────────────── -->
+    <TextView
+        android:id="@+id/tvSplashPoweredBy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:text="Powered by TensorFlow Lite"
+        android:textColor="#3D5A80"
+        android:textSize="11sp"
+        android:letterSpacing="0.04"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

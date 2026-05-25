@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    splash_background.xml
+    Radial gradient: deep OLED center #050D1A → slightly lighter edges
+    Creates a subtle dark vignette depth effect on the splash screen
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="200%p"
+        android:centerX="0.5"
+        android:centerY="0.45"
+        android:startColor="#0D1F3C"
+        android:centerColor="#050D1A"
+        android:endColor="#020810" />
+</shape>

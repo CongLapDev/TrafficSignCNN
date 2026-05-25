@@ -47,4 +47,19 @@
     <color name="feat_history">#1A1A0A</color>
     <color name="feat_stats">#0A2030</color>
     <color name="feat_profile">#1A0A2E</color>
+
+    <!-- Auth screens (Login / Register / Splash) -->
+    <color name="auth_bg">#050D1A</color>
+    <color name="auth_surface">#0D1F3C</color>
+    <color name="auth_input_bg">#0A172E</color>
+    <color name="auth_input_border">#1A2E50</color>
+    <color name="auth_text_primary">#F0F4FF</color>
+    <color name="auth_text_hint">#4A6080</color>
+    <color name="auth_text_link">#3B82F6</color>
+    <color name="auth_btn_primary">#3B82F6</color>
+    <color name="auth_btn_primary_dark">#1D4ED8</color>
+    <color name="auth_google_btn_bg">#0D1F3C</color>
+    <color name="auth_google_btn_border">#1A2E50</color>
+    <color name="auth_divider">#1A2E50</color>
+    <color name="auth_error">#EF4444</color>
 </resources>

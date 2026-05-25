@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">Traffic Sign CNN</string>
+
+    <!-- Auth screens -->
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="label_confirm_password">Xác nhận mật khẩu</string>
+    <string name="label_full_name">Họ và tên</string>
+
+    <string name="btn_login">Đăng nhập</string>
+    <string name="btn_register">Đăng ký</string>
+    <string name="btn_google_signin">Tiếp tục với Google</string>
+
+    <string name="link_to_register">Chưa có tài khoản? <b>Đăng ký</b></string>
+    <string name="link_to_login">Đã có tài khoản? <b>Đăng nhập</b></string>
+
+    <string name="toast_login_success">Đăng nhập thành công</string>
+    <string name="toast_register_success">Đăng ký thành công</string>
+    <string name="toast_logout_success">Đã đăng xuất</string>
+
+    <string name="err_empty_name">Vui lòng nhập họ tên</string>
+    <string name="err_empty_email">Vui lòng nhập email</string>
+    <string name="err_invalid_email">Email không hợp lệ</string>
+    <string name="err_empty_password">Vui lòng nhập mật khẩu</string>
+    <string name="err_password_too_short">Mật khẩu phải ít nhất 6 ký tự</string>
+    <string name="err_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="err_google_signin_failed">Đăng nhập Google thất bại</string>
+
+    <string name="app_tagline">Nhận diện biển báo giao thông bằng AI</string>
+    <string name="label_logout">Đăng xuất</string>
 </resources>

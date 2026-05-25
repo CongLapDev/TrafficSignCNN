@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    splash_logo_glow.xml
+    The outer glowing ring drawable around the logo.
+    Semi-transparent blue oval — animated to pulse (scale + alpha) in Java
+    via ObjectAnimator for the breathing glow effect.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <stroke
+        android:width="1.5dp"
+        android:color="#4D3B82F6" />
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%p"
+        android:startColor="#1A3B82F6"
+        android:endColor="#003B82F6" />
+</shape>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_register.xml
+    Design: matches Login — OLED dark premium
+    Fields: Name → Email → Password → Confirm Password → Register → Login link
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/auth_bg"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="64dp"
+        android:paddingBottom="40dp">
+
+        <!-- ── Logo + Title ───────────────────────── -->
+        <FrameLayout
+            android:id="@+id/registerLogoWrapper"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/splash_icon_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="🚦"
+                android:textSize="30sp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvRegisterTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Tạo tài khoản"
+            android:textColor="@color/auth_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerLogoWrapper" />
+
+        <TextView
+            android:id="@+id/tvRegisterSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Chỉ mất vài giây!"
+            android:textColor="@color/auth_text_hint"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle" />
+
+        <!-- ── Full name ──────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilName"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:hint="@string/label_full_name"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_person"
+            app:startIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvRegisterSubtitle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPersonName|textCapWords"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Email ──────────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_email"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_email"
+            app:startIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilName">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Password ───────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_password"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/auth_text_hint"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilEmail">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPassword"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Confirm Password ───────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilConfirmPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_confirm_password"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/auth_text_hint"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilPassword">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPassword"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionDone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Register button ────────────────────── -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegister"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/btn_register"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/auth_btn_primary"
+            app:cornerRadius="14dp"
+            app:rippleColor="#55FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilConfirmPassword" />
+
+        <!-- ── ProgressBar ────────────────────────── -->
+        <ProgressBar
+            android:id="@+id/registerProgress"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/auth_btn_primary"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnRegister" />
+
+        <!-- ── Login link ─────────────────────────── -->
+        <TextView
+            android:id="@+id/tvGoToLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/link_to_login"
+            android:textColor="@color/auth_text_hint"
+            android:textSize="14sp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerProgress" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Minimum height for Login/Register scroll views to center content properly -->
+    <dimen name="login_min_height">700dp</dimen>
+</resources>

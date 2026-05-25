@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim_splash_title.xml
+    Title slide-up + fade in
+    Duration: 500ms, startOffset: 500ms (after logo appears)
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:fillAfter="true">
+
+    <translate
+        android:fromYDelta="30dp"
+        android:toYDelta="0"
+        android:duration="500"
+        android:startOffset="500" />
+
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="500"
+        android:startOffset="500" />
+
+</set>

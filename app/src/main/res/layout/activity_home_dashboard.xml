@@ -100,7 +100,19 @@
                                 android:textStyle="bold"
                                 android:textColor="#FFFFFF" />
                         </FrameLayout>
+
+                        <!-- Logout button -->
+                        <ImageButton
+                            android:id="@+id/btnLogout"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="8dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_logout"
+                            android:contentDescription="@string/label_logout"
+                            android:tint="@color/dashboard_text_secondary" />
                     </LinearLayout>
+
 
                 </LinearLayout>
             </FrameLayout>

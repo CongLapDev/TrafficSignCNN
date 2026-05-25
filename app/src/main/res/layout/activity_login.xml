@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_login.xml
+    Design: OLED dark premium — matches HomeDashboard (#050D1A, #3B82F6)
+    Layout: Centered card with app logo → email → password → login btn → Google → register link
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/auth_bg"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/login_min_height"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="72dp"
+        android:paddingBottom="40dp">
+
+        <!-- ── Logo + Title ───────────────────────── -->
+        <FrameLayout
+            android:id="@+id/loginLogoWrapper"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/splash_icon_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="🚦"
+                android:textSize="30sp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvLoginTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Đăng nhập"
+            android:textColor="@color/auth_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginLogoWrapper" />
+
+        <TextView
+            android:id="@+id/tvLoginSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Chào mừng trở lại!"
+            android:textColor="@color/auth_text_hint"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLoginTitle" />
+
+        <!-- ── Email field ────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:hint="@string/label_email"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_email"
+            app:startIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLoginSubtitle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Password field ────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_password"
+            app:boxBackgroundColor="@color/auth_input_bg"
+            app:boxStrokeColor="@color/auth_input_border"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/auth_text_hint"
+            app:errorTextColor="@color/auth_error"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/auth_text_hint"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/auth_text_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilEmail">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPassword"
+                android:textColor="@color/auth_text_primary"
+                android:textColorHint="@color/auth_text_hint"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionDone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── Login button ───────────────────────── -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/btn_login"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/auth_btn_primary"
+            app:cornerRadius="14dp"
+            app:rippleColor="#55FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilPassword" />
+
+        <!-- ── ProgressBar (shown during network call) ── -->
+        <ProgressBar
+            android:id="@+id/loginProgress"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/auth_btn_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnLogin"
+            android:layout_marginTop="16dp" />
+
+        <!-- ── Divider "hoặc" ─────────────────────── -->
+        <LinearLayout
+            android:id="@+id/dividerRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginProgress">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/auth_divider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:text="hoặc"
+                android:textColor="@color/auth_text_hint"
+                android:textSize="13sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/auth_divider" />
+        </LinearLayout>
+
+        <!-- ── Google Sign-In button ──────────────── -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoogleSignIn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/btn_google_signin"
+            android:textColor="@color/auth_text_primary"
+            android:textSize="15sp"
+            app:strokeColor="@color/auth_google_btn_border"
+            app:strokeWidth="1dp"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/ic_google"
+            app:iconGravity="textStart"
+            app:iconTint="@null"
+            android:backgroundTint="@color/auth_google_btn_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerRow" />
+
+        <!-- ── Register link ──────────────────────── -->
+        <TextView
+            android:id="@+id/tvGoToRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/link_to_register"
+            android:textColor="@color/auth_text_hint"
+            android:textSize="14sp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnGoogleSignIn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

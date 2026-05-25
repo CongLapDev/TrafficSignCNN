@@ -2,39 +2,51 @@ package com.example.trafficsigncnn;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Home Dashboard — primary entry screen after login.
  *
  * Responsibilities:
- *  - Display user greeting + avatar initial
- *  - Show daily scan summary stats
+ *  - Auth guard: redirect to LoginActivity if not authenticated
+ *  - Display user greeting + avatar initial from FirebaseAuth
+ *  - Show daily scan summary stats (placeholder until Firestore)
  *  - Provide 2-column feature grid navigation
- *  - Show AI model readiness status
- *
- * Firebase migration:
- *  - Replace UserSession.placeholder() with a real Firebase read
- *  - Add an Auth guard: if FirebaseAuth.getInstance().getCurrentUser() == null → finish() → LoginActivity
+ *  - Logout button in header
  */
 public class HomeDashboardActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // ── Auth guard ──────────────────────────────────────────────
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            navigateToLogin();
+            return; // Do not proceed with UI setup
+        }
+
         // Edge-to-edge display (OLED dark mode — no system bar tinting)
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
         setContentView(R.layout.activity_home_dashboard);
 
         // Apply window insets to push content below status bar
@@ -46,12 +58,13 @@ public class HomeDashboardActivity extends AppCompatActivity {
                     return insets;
                 });
 
-        // ── Load user session (placeholder; swap with Firebase later) ──
-        UserSession session = UserSession.placeholder();
+        // ── Load real user session from Firebase ────────────────────
+        UserSession session = UserSession.fromFirebaseUser(currentUser);
         bindHeader(session);
         bindSummaryCard(session);
         bindFooter(session);
         setupFeatureGrid();
+        setupLogout();
     }
 
     // ─────────────────────────────────────────────
@@ -59,9 +72,9 @@ public class HomeDashboardActivity extends AppCompatActivity {
     // ─────────────────────────────────────────────
 
     private void bindHeader(UserSession session) {
-        TextView tvGreeting = findViewById(R.id.tvGreeting);
+        TextView tvGreeting     = findViewById(R.id.tvGreeting);
         TextView tvAvatarInitial = findViewById(R.id.tvAvatarInitial);
-        FrameLayout btnAvatar = findViewById(R.id.btnAvatar);
+        FrameLayout btnAvatar   = findViewById(R.id.btnAvatar);
 
         tvGreeting.setText("Xin chào, " + session.getDisplayName());
         tvAvatarInitial.setText(session.getAvatarInitial());
@@ -75,9 +88,9 @@ public class HomeDashboardActivity extends AppCompatActivity {
     // ─────────────────────────────────────────────
 
     private void bindSummaryCard(UserSession session) {
-        TextView tvTotalScans    = findViewById(R.id.tvTotalScans);
-        TextView tvMostDetected  = findViewById(R.id.tvMostDetected);
-        TextView tvModelVersion  = findViewById(R.id.tvModelVersion);
+        TextView tvTotalScans   = findViewById(R.id.tvTotalScans);
+        TextView tvMostDetected = findViewById(R.id.tvMostDetected);
+        TextView tvModelVersion = findViewById(R.id.tvModelVersion);
 
         tvTotalScans.setText(String.valueOf(session.getScansToday()));
         tvMostDetected.setText(session.getMostDetectedSign());
@@ -91,6 +104,39 @@ public class HomeDashboardActivity extends AppCompatActivity {
     private void bindFooter(UserSession session) {
         TextView tvAppInfo = findViewById(R.id.tvAppInfo);
         tvAppInfo.setText(session.getAppInfoLine());
+    }
+
+    // ─────────────────────────────────────────────
+    // Logout
+    // ─────────────────────────────────────────────
+
+    private void setupLogout() {
+        // Try to find a logout button by ID — add it to the layout if needed
+        View btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> showLogoutDialog());
+        }
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có chắc muốn đăng xuất không?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> performLogout())
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void performLogout() {
+        mAuth.signOut();
+        Toast.makeText(this, getString(R.string.toast_logout_success), Toast.LENGTH_SHORT).show();
+        navigateToLogin();
+    }
+
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finishAffinity();
     }
 
     // ─────────────────────────────────────────────

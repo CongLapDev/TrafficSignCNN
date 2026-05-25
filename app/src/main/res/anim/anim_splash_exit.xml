@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim_splash_exit.xml
+    Smooth fade-out when navigating away from splash
+    No white flash — fades to the OLED dark background
+-->
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromAlpha="1.0"
+    android:toAlpha="0.0"
+    android:duration="300"
+    android:fillAfter="true" />
