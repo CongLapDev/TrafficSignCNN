@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/google-services.json
+.env
+.ENV
+*.env
+*.ENV

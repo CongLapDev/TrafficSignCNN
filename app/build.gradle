@@ -3,9 +3,27 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def envProperties = new Properties()
+def envFiles = [
+    rootProject.file('.env'),
+    rootProject.file('.ENV'),
+    project.file('.env'),
+    project.file('.ENV')
+]
+for (File file : envFiles) {
+    if (file.exists()) {
+        file.withInputStream { stream -> envProperties.load(stream) }
+        break
+    }
+}
+
 android {
     namespace 'com.example.trafficsigncnn'
     compileSdk 36
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         applicationId "com.example.trafficsigncnn"
@@ -15,6 +33,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Expose WEB_CLIENT_ID from env
+        buildConfigField "String", "WEB_CLIENT_ID", "\"${envProperties['WEB_CLIENT_ID'] ?: ''}\""
     }
 
     aaptOptions {

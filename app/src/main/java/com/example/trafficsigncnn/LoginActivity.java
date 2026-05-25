@@ -41,9 +41,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    // TODO: replace WEB_CLIENT_ID here
-    private static final String WEB_CLIENT_ID =
-            "677816196902-u9lrimqgr8vs9j3i2le75pdc1bk8josa.apps.googleusercontent.com";
+    // WEB_CLIENT_ID is loaded dynamically from BuildConfig (populated by app/.ENV)
+    private static final String WEB_CLIENT_ID = BuildConfig.WEB_CLIENT_ID;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
