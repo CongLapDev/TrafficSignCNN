@@ -83,6 +83,14 @@
             android:name=".HistoryActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".StatisticsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".HistoryDetailActivity"
+            android:exported="false" />
+
         <!-- Legacy single-screen activity kept for reference -->
         <activity
             android:name=".MainActivity"

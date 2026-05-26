@@ -83,6 +83,10 @@ public class LiveScanActivity extends AppCompatActivity {
     private volatile String currentStableLabel = null;
     private volatile float currentStableConfidence = 0f;
 
+    // Last rendered frame — kept for Cloudinary upload on save
+    private Bitmap currentDisplayBitmap = null;
+    private final Object bitmapLock = new Object();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,46 +137,77 @@ public class LiveScanActivity extends AppCompatActivity {
         float confidence = currentStableConfidence;
 
         if (label == null || confidence < SAVE_THRESHOLD) {
-            Toast.makeText(this, "Chưa có kết quả đủ tin cậy để lưu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Chua co ket qua du tin cay de luu", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Disable immediately to prevent duplicate taps
+        // Freeze a copy of the last live frame for upload securely
+        Bitmap snapshot = null;
+        synchronized (bitmapLock) {
+            if (currentDisplayBitmap != null && !currentDisplayBitmap.isRecycled()) {
+                snapshot = currentDisplayBitmap.copy(Bitmap.Config.ARGB_8888, false);
+            }
+        }
+
+        if (snapshot == null) {
+            Toast.makeText(this, "Khong the lay anh tu camera, vui long thu lai", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         btnSaveHistory.setEnabled(false);
-        btnSaveHistory.setText("Đang lưu...");
+        btnSaveHistory.setText("Dang tai anh...");
 
-        firestoreRepository.saveScanResult(
-                label, confidence, "live", null,
-                new FirestoreRepository.SaveCallback() {
-                    @Override
-                    public void onSuccess() {
-                        runOnUiThread(() -> {
-                            Toast.makeText(LiveScanActivity.this,
-                                    "✅ Đã lưu vào lịch sử", Toast.LENGTH_SHORT).show();
-                            btnSaveHistory.setText("Lưu vào lịch sử");
-                            // Re-enable after cooldown
-                            mainHandler.postDelayed(() -> {
-                                if (!isFinishing()) {
-                                    btnSaveHistory.setEnabled(
-                                            currentStableConfidence >= SAVE_THRESHOLD);
-                                }
-                            }, SAVE_COOLDOWN_MS);
-                        });
-                    }
+        final Bitmap finalSnapshot = snapshot;
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        runOnUiThread(() -> {
-                            String msg = e.getMessage() != null ? e.getMessage() : "Lỗi không xác định";
-                            Toast.makeText(LiveScanActivity.this,
-                                    "❌ Lưu thất bại: " + msg, Toast.LENGTH_LONG).show();
-                            btnSaveHistory.setText("Lưu vào lịch sử");
-                            // Re-enable so user can retry
-                            btnSaveHistory.setEnabled(
-                                    currentStableConfidence >= SAVE_THRESHOLD);
+        // Step 1: Upload to Cloudinary (OkHttp background thread)
+        CloudinaryUploader.uploadBitmap(finalSnapshot, new CloudinaryUploader.UploadCallback() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                // Step 2: Save Firestore with imageUrl
+                firestoreRepository.saveScanResult(
+                        label, confidence, "live", imageUrl,
+                        new FirestoreRepository.SaveCallback() {
+                            @Override
+                            public void onSuccess() {
+                                runOnUiThread(() -> {
+                                    if (finalSnapshot != null) finalSnapshot.recycle();
+                                    Toast.makeText(LiveScanActivity.this,
+                                            "Da luu vao lich su", Toast.LENGTH_SHORT).show();
+                                    btnSaveHistory.setText("Luu vao lich su");
+                                    mainHandler.postDelayed(() -> {
+                                        if (!isFinishing()) {
+                                            btnSaveHistory.setEnabled(
+                                                    currentStableConfidence >= SAVE_THRESHOLD);
+                                        }
+                                    }, SAVE_COOLDOWN_MS);
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                runOnUiThread(() -> {
+                                    if (finalSnapshot != null) finalSnapshot.recycle();
+                                    String msg = e.getMessage() != null ? e.getMessage() : "Loi khong xac dinh";
+                                    Toast.makeText(LiveScanActivity.this,
+                                            "Luu that bai: " + msg, Toast.LENGTH_LONG).show();
+                                    btnSaveHistory.setText("Luu vao lich su");
+                                    btnSaveHistory.setEnabled(currentStableConfidence >= SAVE_THRESHOLD);
+                                });
+                            }
                         });
-                    }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                runOnUiThread(() -> {
+                    if (finalSnapshot != null) finalSnapshot.recycle();
+                    Toast.makeText(LiveScanActivity.this,
+                            "Upload that bai: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    btnSaveHistory.setText("Luu vao lich su");
+                    btnSaveHistory.setEnabled(currentStableConfidence >= SAVE_THRESHOLD);
                 });
+            }
+        });
     }
 
     // ─────────────────────────────────────────────
@@ -216,6 +251,18 @@ public class LiveScanActivity extends AppCompatActivity {
                     if (bitmap != null) {
                         int rotation = image.getImageInfo().getRotationDegrees();
                         Bitmap rotated = InferenceUtils.rotateBitmap(bitmap, rotation);
+
+                        // Keep a copy for snapshot on save securely
+                        Bitmap newCopy = rotated.copy(Bitmap.Config.ARGB_8888, false);
+                        Bitmap prev;
+                        synchronized (bitmapLock) {
+                            prev = currentDisplayBitmap;
+                            currentDisplayBitmap = newCopy;
+                        }
+                        if (prev != null) {
+                            prev.recycle();
+                        }
+
                         Bitmap cropped = InferenceUtils.cropCenterSquare(rotated);
 
                         InferenceResult result = tfliteHelper.classifyImage(cropped);
@@ -349,5 +396,12 @@ public class LiveScanActivity extends AppCompatActivity {
             tfliteHelper.close();
         if (analysisExecutor != null)
             analysisExecutor.shutdown();
+            
+        synchronized (bitmapLock) {
+            if (currentDisplayBitmap != null) {
+                currentDisplayBitmap.recycle();
+                currentDisplayBitmap = null;
+            }
+        }
     }
 }

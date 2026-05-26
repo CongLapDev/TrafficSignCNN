@@ -13,8 +13,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Singleton repository for all Firestore operations.
@@ -83,6 +87,12 @@ public class FirestoreRepository {
     /** Callback for explicit (user-triggered) save operations. */
     public interface SaveCallback {
         void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    /** Callback for aggregated statistics. */
+    public interface StatisticsCallback {
+        void onSuccess(UserStatistics stats);
         void onFailure(Exception e);
     }
 
@@ -374,6 +384,94 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "❌ loadUserStats failed: " + e.getMessage(), e);
+                    callback.onFailure(e);
+                });
+    }
+
+    /**
+     * Client-side aggregation over users/{uid}/scan_history.
+     *
+     * Computes:
+     *  1. totalScans         → count of all docs
+     *  2. scansToday         → timestamp on the same calendar day
+     *  3. scansThisWeek      → timestamp within last 7 days
+     *  4. averageConfidence  → mean of all confidence fields
+     *  5. labelCounts        → label → frequency, sorted descending
+     */
+    public void loadStatistics(@NonNull StatisticsCallback callback) {
+        FirebaseUser user = requireUser();
+        if (user == null) {
+            callback.onFailure(new IllegalStateException("No signed-in user"));
+            return;
+        }
+
+        historyCol(user.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    int totalScans = snapshot.size();
+                    int scansToday = 0;
+                    int scansThisWeek = 0;
+                    float sumConfidence = 0f;
+                    Map<String, Integer> rawLabelCounts = new HashMap<>();
+
+                    // Calendar boundaries
+                    Calendar calToday = Calendar.getInstance();
+                    int todayYear  = calToday.get(Calendar.YEAR);
+                    int todayMonth = calToday.get(Calendar.MONTH);
+                    int todayDay   = calToday.get(Calendar.DAY_OF_MONTH);
+                    long sevenDaysAgoMs = calToday.getTimeInMillis() - (7L * 24 * 60 * 60 * 1000);
+
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
+                        // Confidence
+                        Double conf = doc.getDouble("confidence");
+                        if (conf != null) sumConfidence += conf.floatValue();
+
+                        // Timestamp
+                        com.google.firebase.Timestamp ts = doc.getTimestamp("timestamp");
+                        if (ts != null) {
+                            long ms = ts.toDate().getTime();
+                            // This week
+                            if (ms >= sevenDaysAgoMs) scansThisWeek++;
+                            // Today
+                            Calendar docCal = Calendar.getInstance();
+                            docCal.setTimeInMillis(ms);
+                            if (docCal.get(Calendar.YEAR)         == todayYear
+                                    && docCal.get(Calendar.MONTH) == todayMonth
+                                    && docCal.get(Calendar.DAY_OF_MONTH) == todayDay) {
+                                scansToday++;
+                            }
+                        }
+
+                        // Label frequency
+                        String label = doc.getString("label");
+                        if (label != null && !label.isEmpty()) {
+                            rawLabelCounts.put(label, rawLabelCounts.getOrDefault(label, 0) + 1);
+                        }
+                    }
+
+                    float avgConfidence = totalScans > 0 ? sumConfidence / totalScans : 0f;
+
+                    // Sort label map descending by count
+                    Map<String, Integer> sortedLabels = rawLabelCounts.entrySet().stream()
+                            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    Map.Entry::getValue,
+                                    (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+                    UserStatistics stats = new UserStatistics(
+                            totalScans, scansToday, scansThisWeek,
+                            avgConfidence, sortedLabels);
+
+                    Log.i(TAG, "✅ Statistics loaded: total=" + totalScans
+                            + " today=" + scansToday + " week=" + scansThisWeek
+                            + " avgConf=" + String.format("%.2f", avgConfidence));
+                    callback.onSuccess(stats);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "❌ loadStatistics failed: " + e.getMessage(), e);
                     callback.onFailure(e);
                 });
     }

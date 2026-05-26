@@ -158,8 +158,9 @@ public class CapturePhotoActivity extends AppCompatActivity {
 
                             runOnUiThread(() -> showCapturedMode(uiCopy));
 
-                            // Inference on rotated (recycle after inference)
-                            runCaptureInference(rotated);
+                            // Inference + upload on rotated (a separate copy for upload safety)
+                            Bitmap uploadCopy = rotated.copy(Bitmap.Config.ARGB_8888, false);
+                            runCaptureInference(rotated, uploadCopy);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -205,7 +206,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         resultCard.setVisibility(View.VISIBLE);
     }
 
-    private void runCaptureInference(Bitmap capturedFrame) {
+    private void runCaptureInference(Bitmap capturedFrame, Bitmap uploadCopy) {
         // Crop on the background thread
         Bitmap cropped = InferenceUtils.cropCenterSquare(capturedFrame, true);
 
@@ -214,29 +215,48 @@ public class CapturePhotoActivity extends AppCompatActivity {
         cropped.recycle();
 
         final String displayMsg = result != null
-                ? String.format("%s\n%.1f%% độ chắc chắn", result.getLabel(), result.getConfidence() * 100)
-                : "Không xác định được biển báo";
+                ? String.format("%s\n%.1f%% do chac chan", result.getLabel(), result.getConfidence() * 100)
+                : "Khong xac dinh duoc bien bao";
 
-        // Persist to Firestore with explicit result callbacks
+        // Upload to Cloudinary then save Firestore — must NOT block UI thread
         if (result != null) {
-            firestoreRepository.saveScanResult(
-                    result.getLabel(), result.getConfidence(), "capture", "",
-                    new FirestoreRepository.SaveCallback() {
-                        @Override
-                        public void onSuccess() {
-                            runOnUiThread(() ->
-                                    Toast.makeText(CapturePhotoActivity.this,
-                                            "✅ Đã lưu", Toast.LENGTH_SHORT).show());
-                        }
+            final InferenceResult finalResult = result;
+            CloudinaryUploader.uploadBitmap(uploadCopy, new CloudinaryUploader.UploadCallback() {
+                @Override
+                public void onSuccess(String imageUrl) {
+                    uploadCopy.recycle();
+                    firestoreRepository.saveScanResult(
+                            finalResult.getLabel(), finalResult.getConfidence(),
+                            "capture", imageUrl,
+                            new FirestoreRepository.SaveCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    runOnUiThread(() ->
+                                            Toast.makeText(CapturePhotoActivity.this,
+                                                    "Da luu", Toast.LENGTH_SHORT).show());
+                                }
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            String msg = e.getMessage() != null ? e.getMessage() : "Lỗi không xác định";
-                            runOnUiThread(() ->
-                                    Toast.makeText(CapturePhotoActivity.this,
-                                            "❌ Lưu thất bại: " + msg, Toast.LENGTH_LONG).show());
-                        }
-                    });
+                                @Override
+                                public void onFailure(Exception e) {
+                                    String msg = e.getMessage() != null ? e.getMessage() : "Loi khong xac dinh";
+                                    runOnUiThread(() ->
+                                            Toast.makeText(CapturePhotoActivity.this,
+                                                    "Luu that bai: " + msg, Toast.LENGTH_LONG).show());
+                                }
+                            });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    uploadCopy.recycle();
+                    runOnUiThread(() ->
+                            Toast.makeText(CapturePhotoActivity.this,
+                                    "Upload that bai: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
+            });
+        } else {
+            // No valid result — recycle the upload copy
+            uploadCopy.recycle();
         }
 
         runOnUiThread(() -> {

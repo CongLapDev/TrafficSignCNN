@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -34,9 +36,14 @@ public class ScanHistoryAdapter extends RecyclerView.Adapter<ScanHistoryAdapter.
         void onDelete(ScanHistory item, int position);
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(ScanHistory item);
+    }
+
     private final List<ScanHistory> allItems;      // master list
     private final List<ScanHistory> displayItems;  // filtered list shown in RecyclerView
     private final OnDeleteClickListener deleteListener;
+    private OnItemClickListener itemClickListener;
 
     private static final SimpleDateFormat DATE_FMT =
             new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -46,6 +53,10 @@ public class ScanHistoryAdapter extends RecyclerView.Adapter<ScanHistoryAdapter.
         this.allItems      = new ArrayList<>(items);
         this.displayItems  = new ArrayList<>(items);
         this.deleteListener = deleteListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
     }
 
     // ─── Filter ──────────────────────────────────────────────────────────
@@ -116,6 +127,15 @@ public class ScanHistoryAdapter extends RecyclerView.Adapter<ScanHistoryAdapter.
                 deleteListener.onDelete(displayItems.get(pos), pos);
             }
         });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (itemClickListener != null) {
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_ID) {
+                    itemClickListener.onItemClick(displayItems.get(pos));
+                }
+            }
+        });
     }
 
     @Override
@@ -127,15 +147,19 @@ public class ScanHistoryAdapter extends RecyclerView.Adapter<ScanHistoryAdapter.
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        final ImageView  ivSourceIcon;
-        final TextView   tvLabel;
-        final TextView   tvConfidence;
-        final TextView   tvSource;
-        final TextView   tvTimestamp;
+        final ImageView   ivThumbnail;
+        final View        iconCircle;
+        final ImageView   ivSourceIcon;
+        final TextView    tvLabel;
+        final TextView    tvConfidence;
+        final TextView    tvSource;
+        final TextView    tvTimestamp;
         final ImageButton btnDelete;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivThumbnail  = itemView.findViewById(R.id.ivThumbnail);
+            iconCircle   = itemView.findViewById(R.id.iconCircle);
             ivSourceIcon = itemView.findViewById(R.id.ivSourceIcon);
             tvLabel      = itemView.findViewById(R.id.tvLabel);
             tvConfidence = itemView.findViewById(R.id.tvConfidence);
@@ -165,16 +189,29 @@ public class ScanHistoryAdapter extends RecyclerView.Adapter<ScanHistoryAdapter.
             String source = item.getSource() != null ? item.getSource() : "—";
             tvSource.setText(source);
 
-            // Source icon
-            switch (source) {
-                case "gallery":
-                    ivSourceIcon.setImageResource(R.drawable.ic_gallery);
-                    break;
-                case "live":
-                case "capture":
-                default:
-                    ivSourceIcon.setImageResource(R.drawable.ic_camera);
-                    break;
+            // Thumbnail or source icon
+            String imageUrl = item.getImageUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                ivThumbnail.setVisibility(View.VISIBLE);
+                iconCircle.setVisibility(View.GONE);
+                Glide.with(ivThumbnail.getContext())
+                        .load(imageUrl)
+                        .centerCrop()
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(ivThumbnail);
+            } else {
+                ivThumbnail.setVisibility(View.GONE);
+                iconCircle.setVisibility(View.VISIBLE);
+                switch (source) {
+                    case "gallery":
+                        ivSourceIcon.setImageResource(R.drawable.ic_gallery);
+                        break;
+                    case "live":
+                    case "capture":
+                    default:
+                        ivSourceIcon.setImageResource(R.drawable.ic_camera);
+                        break;
+                }
             }
 
             // Timestamp

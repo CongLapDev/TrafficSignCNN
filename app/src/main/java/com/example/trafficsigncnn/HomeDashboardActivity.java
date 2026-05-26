@@ -195,10 +195,10 @@ public class HomeDashboardActivity extends AppCompatActivity {
         cardHistory.setOnClickListener(v ->
                 startActivity(new Intent(this, HistoryActivity.class)));
 
-        // Statistics (not yet implemented)
+        // Statistics
         MaterialCardView cardStats = findViewById(R.id.cardFeatureStats);
         cardStats.setOnClickListener(v ->
-                Toast.makeText(this, "Thống kê — sắp ra mắt", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, StatisticsActivity.class)));
 
         // Profile (not yet implemented)
         MaterialCardView cardProfile = findViewById(R.id.cardFeatureProfile);

@@ -98,6 +98,8 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         adapter = new ScanHistoryAdapter(new ArrayList<>(), this::onDeleteItem);
+        adapter.setOnItemClickListener(item ->
+                startActivity(HistoryDetailActivity.buildIntent(this, item)));
         recyclerHistory.setLayoutManager(new LinearLayoutManager(this));
         recyclerHistory.setAdapter(adapter);
         recyclerHistory.setHasFixedSize(false);

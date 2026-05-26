@@ -126,36 +126,54 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
             // Pass a copy so the display bitmap is never recycled by inference
             final Bitmap inferenceBitmap = displayedBitmap.copy(Bitmap.Config.ARGB_8888, false);
             inferenceExecutor.execute(() -> {
-                Bitmap cropped = InferenceUtils.cropCenterSquare(inferenceBitmap, true);
+                // Do NOT recycle inferenceBitmap here (false), because we need it for upload
+                Bitmap cropped = InferenceUtils.cropCenterSquare(inferenceBitmap, false);
                 InferenceResult result = InferenceUtils.runMajorityVoteInference(tfliteHelper, cropped);
                 cropped.recycle();
 
-                // Persist to Firestore with explicit result callbacks
-                if (result != null) {
-                    firestoreRepository.saveScanResult(
-                            result.getLabel(), result.getConfidence(), "gallery", "",
-                            new FirestoreRepository.SaveCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    runOnUiThread(() -> Toast.makeText(GalleryRecognitionActivity.this,
-                                            "✅ Đã lưu", Toast.LENGTH_SHORT).show());
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    String msg = e.getMessage() != null
-                                            ? e.getMessage()
-                                            : "Lỗi không xác định";
-                                    runOnUiThread(() -> Toast.makeText(GalleryRecognitionActivity.this,
-                                            "❌ Lưu thất bại: " + msg,
-                                            Toast.LENGTH_LONG).show());
-                                }
-                            });
-                }
-
                 final String msg = result != null
-                        ? String.format("%s\n%.1f%% độ chắc chắn", result.getLabel(), result.getConfidence() * 100)
-                        : "Không xác định được biển báo";
+                        ? String.format("%s\n%.1f%% do chac chan", result.getLabel(), result.getConfidence() * 100)
+                        : "Khong xac dinh duoc bien bao";
+
+                if (result != null) {
+                    final InferenceResult finalResult = result;
+                    // inferenceBitmap copy already allocated; upload it, then recycle
+                    CloudinaryUploader.uploadBitmap(inferenceBitmap, new CloudinaryUploader.UploadCallback() {
+                        @Override
+                        public void onSuccess(String imageUrl) {
+                            inferenceBitmap.recycle();
+                            firestoreRepository.saveScanResult(
+                                    finalResult.getLabel(), finalResult.getConfidence(),
+                                    "gallery", imageUrl,
+                                    new FirestoreRepository.SaveCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            runOnUiThread(() -> Toast.makeText(
+                                                    GalleryRecognitionActivity.this,
+                                                    "Da luu", Toast.LENGTH_SHORT).show());
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            String err = e.getMessage() != null ? e.getMessage() : "Loi khong xac dinh";
+                                            runOnUiThread(() -> Toast.makeText(
+                                                    GalleryRecognitionActivity.this,
+                                                    "Luu that bai: " + err, Toast.LENGTH_LONG).show());
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            inferenceBitmap.recycle();
+                            runOnUiThread(() -> Toast.makeText(
+                                    GalleryRecognitionActivity.this,
+                                    "Upload that bai: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                        }
+                    });
+                } else {
+                    inferenceBitmap.recycle();
+                }
 
                 runOnUiThread(() -> {
                     resultText.setText(msg);
