@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_scan_history.xml
+    Single row in the history RecyclerView.
+    Design: OLED dark, sapphire accent, matches dashboard aesthetic.
+    Layout: [Source chip | Label | Confidence | Timestamp] + [Delete icon]
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="5dp"
+    app:cardBackgroundColor="@color/dashboard_surface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/dashboard_border"
+    app:strokeWidth="1dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp">
+
+        <!-- Left: Source icon circle -->
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/chip_ai_ready_bg"
+            android:layout_marginEnd="12dp">
+
+            <ImageView
+                android:id="@+id/ivSourceIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_camera"
+                android:tint="@color/dashboard_primary" />
+        </FrameLayout>
+
+        <!-- Center: Label + meta row -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Sign label -->
+            <TextView
+                android:id="@+id/tvLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed Limit 50"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/dashboard_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Confidence + source + timestamp -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <!-- Confidence chip -->
+                <TextView
+                    android:id="@+id/tvConfidence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="92%"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dashboard_success"
+                    android:background="@drawable/chip_ai_ready_bg"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp" />
+
+                <!-- Source chip -->
+                <TextView
+                    android:id="@+id/tvSource"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="live"
+                    android:textSize="11sp"
+                    android:textColor="@color/dashboard_text_secondary"
+                    android:background="@drawable/chip_ai_ready_bg"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginStart="6dp" />
+
+                <!-- Timestamp -->
+                <TextView
+                    android:id="@+id/tvTimestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12:34"
+                    android:textSize="11sp"
+                    android:textColor="@color/dashboard_text_muted"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Right: Delete button -->
+        <ImageButton
+            android:id="@+id/btnDeleteItem"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/dashboard_text_muted"
+            android:contentDescription="Xóa" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

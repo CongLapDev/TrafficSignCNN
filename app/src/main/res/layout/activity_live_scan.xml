@@ -160,6 +160,22 @@
                 android:progressDrawable="@drawable/confidence_progress"
                 android:indeterminate="false" />
 
+            <!-- Save to history button — enabled only when confidence >= 0.75 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveHistory"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="14dp"
+                android:text="Lưu vào lịch sử"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:enabled="false"
+                app:backgroundTint="#3B82F6"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_history"
+                app:iconGravity="start"
+                app:iconPadding="8dp" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

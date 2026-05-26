@@ -28,11 +28,11 @@ import java.util.concurrent.Executors;
  * Gallery recognition screen.
  *
  * Flow:
- *  1. User taps "Chọn Ảnh" → opens image picker
- *  2. Selected image displayed in card
- *  3. Majority-vote inference runs in background
- *  4. Result shown below the image
- *  5. User can pick another image (previous bitmap recycled)
+ * 1. User taps "Chọn Ảnh" → opens image picker
+ * 2. Selected image displayed in card
+ * 3. Majority-vote inference runs in background
+ * 4. Result shown below the image
+ * 5. User can pick another image (previous bitmap recycled)
  */
 public class GalleryRecognitionActivity extends AppCompatActivity {
 
@@ -44,6 +44,7 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
     private MaterialCardView resultCard;
 
     private ExecutorService inferenceExecutor;
+    private FirestoreRepository firestoreRepository;
 
     // Displayed bitmap — recycled when a new image is picked
     private Bitmap displayedBitmap = null;
@@ -60,8 +61,7 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }
-    );
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,7 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
         resultCard = findViewById(R.id.resultCard);
 
         inferenceExecutor = Executors.newSingleThreadExecutor();
+        firestoreRepository = FirestoreRepository.getInstance();
 
         FloatingActionButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
@@ -129,6 +130,29 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
                 InferenceResult result = InferenceUtils.runMajorityVoteInference(tfliteHelper, cropped);
                 cropped.recycle();
 
+                // Persist to Firestore with explicit result callbacks
+                if (result != null) {
+                    firestoreRepository.saveScanResult(
+                            result.getLabel(), result.getConfidence(), "gallery", "",
+                            new FirestoreRepository.SaveCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    runOnUiThread(() -> Toast.makeText(GalleryRecognitionActivity.this,
+                                            "✅ Đã lưu", Toast.LENGTH_SHORT).show());
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    String msg = e.getMessage() != null
+                                            ? e.getMessage()
+                                            : "Lỗi không xác định";
+                                    runOnUiThread(() -> Toast.makeText(GalleryRecognitionActivity.this,
+                                            "❌ Lưu thất bại: " + msg,
+                                            Toast.LENGTH_LONG).show());
+                                }
+                            });
+                }
+
                 final String msg = result != null
                         ? String.format("%s\n%.1f%% độ chắc chắn", result.getLabel(), result.getConfidence() * 100)
                         : "Không xác định được biển báo";
@@ -148,8 +172,10 @@ public class GalleryRecognitionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (tfliteHelper != null) tfliteHelper.close();
-        if (inferenceExecutor != null) inferenceExecutor.shutdown();
+        if (tfliteHelper != null)
+            tfliteHelper.close();
+        if (inferenceExecutor != null)
+            inferenceExecutor.shutdown();
         if (displayedBitmap != null) {
             displayedBitmap.recycle();
             displayedBitmap = null;

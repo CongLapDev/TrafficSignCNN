@@ -53,6 +53,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
     private View guideBox;
 
     private ExecutorService inferenceExecutor;
+    private FirestoreRepository firestoreRepository;
 
     // Capture sync
     private volatile boolean captureRequested = false;
@@ -77,6 +78,7 @@ public class CapturePhotoActivity extends AppCompatActivity {
         guideBox = findViewById(R.id.guideBox);
 
         inferenceExecutor = Executors.newSingleThreadExecutor();
+        firestoreRepository = FirestoreRepository.getInstance();
 
         FloatingActionButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
@@ -214,6 +216,28 @@ public class CapturePhotoActivity extends AppCompatActivity {
         final String displayMsg = result != null
                 ? String.format("%s\n%.1f%% độ chắc chắn", result.getLabel(), result.getConfidence() * 100)
                 : "Không xác định được biển báo";
+
+        // Persist to Firestore with explicit result callbacks
+        if (result != null) {
+            firestoreRepository.saveScanResult(
+                    result.getLabel(), result.getConfidence(), "capture", "",
+                    new FirestoreRepository.SaveCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() ->
+                                    Toast.makeText(CapturePhotoActivity.this,
+                                            "✅ Đã lưu", Toast.LENGTH_SHORT).show());
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            String msg = e.getMessage() != null ? e.getMessage() : "Lỗi không xác định";
+                            runOnUiThread(() ->
+                                    Toast.makeText(CapturePhotoActivity.this,
+                                            "❌ Lưu thất bại: " + msg, Toast.LENGTH_LONG).show());
+                        }
+                    });
+        }
 
         runOnUiThread(() -> {
             resultText.setText(displayMsg);

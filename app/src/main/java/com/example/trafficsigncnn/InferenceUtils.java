@@ -8,15 +8,18 @@ import java.util.Map;
 
 /**
  * Shared static utilities for bitmap preprocessing and inference.
- * Used by LiveScanActivity, CapturePhotoActivity, and GalleryRecognitionActivity.
+ * Used by LiveScanActivity, CapturePhotoActivity, and
+ * GalleryRecognitionActivity.
  */
 public class InferenceUtils {
 
-    private InferenceUtils() {}
+    private InferenceUtils() {
+    }
 
     /** Rotate a bitmap by the given degrees. Recycles the source bitmap. */
     public static Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
-        if (degrees == 0) return bitmap;
+        if (degrees == 0)
+            return bitmap;
         Matrix matrix = new Matrix();
         matrix.postRotate(degrees);
         Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -52,12 +55,14 @@ public class InferenceUtils {
      * Run inference 3× on the cropped bitmap and return the majority-vote result.
      * This method is blocking — call it from a background thread.
      *
-     * @param helper       initialized TFLiteHelper
+     * @param helper        initialized TFLiteHelper
      * @param croppedBitmap already-cropped bitmap (NOT recycled by this method)
-     * @return InferenceResult with majority label and average confidence, or null on error
+     * @return InferenceResult with majority label and average confidence, or null
+     *         on error
      */
     public static InferenceResult runMajorityVoteInference(TFLiteHelper helper, Bitmap croppedBitmap) {
-        if (helper == null || croppedBitmap == null) return null;
+        if (helper == null || croppedBitmap == null)
+            return null;
 
         String[] labels = new String[3];
         float[] confidences = new float[3];

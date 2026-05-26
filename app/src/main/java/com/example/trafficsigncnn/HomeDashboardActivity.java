@@ -2,6 +2,7 @@ package com.example.trafficsigncnn;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -30,7 +31,10 @@ import com.google.firebase.auth.FirebaseUser;
  */
 public class HomeDashboardActivity extends AppCompatActivity {
 
+    private static final String TAG = "HomeDashboard";
     private FirebaseAuth mAuth;
+    private FirestoreRepository repo;
+    private TextView tvTotalScans;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,33 @@ public class HomeDashboardActivity extends AppCompatActivity {
         bindFooter(session);
         setupFeatureGrid();
         setupLogout();
+
+        repo = FirestoreRepository.getInstance();
+        tvTotalScans = findViewById(R.id.tvTotalScans);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh totalScans from Firestore each time dashboard is visible
+        loadTotalScans();
+    }
+
+    private void loadTotalScans() {
+        repo.loadUserStats(new FirestoreRepository.StatsCallback() {
+            @Override
+            public void onSuccess(long totalScans) {
+                runOnUiThread(() -> {
+                    if (tvTotalScans != null) {
+                        tvTotalScans.setText(String.valueOf(totalScans));
+                    }
+                });
+            }
+            @Override
+            public void onFailure(Exception e) {
+                Log.w(TAG, "loadTotalScans failed: " + e.getMessage());
+            }
+        });
     }
 
     // ─────────────────────────────────────────────
@@ -159,10 +190,10 @@ public class HomeDashboardActivity extends AppCompatActivity {
         cardGallery.setOnClickListener(v ->
                 startActivity(new Intent(this, GalleryRecognitionActivity.class)));
 
-        // History (not yet implemented)
+        // History
         MaterialCardView cardHistory = findViewById(R.id.cardFeatureHistory);
         cardHistory.setOnClickListener(v ->
-                Toast.makeText(this, "Lịch sử — sắp ra mắt", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, HistoryActivity.class)));
 
         // Statistics (not yet implemented)
         MaterialCardView cardStats = findViewById(R.id.cardFeatureStats);
